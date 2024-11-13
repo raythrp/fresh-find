@@ -1,0 +1,31 @@
+{
+  "name": "capstone",
+  "version": "1.0.0",
+  "description": "back-end for fresh find mobile app",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raythrp/fresh-find.git"
+  },
+  "author": "Athar & Rio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raythrp/fresh-find/issues"
+  },
+  "homepage": "https://github.com/raythrp/fresh-find#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "nanoid": "^5.0.8",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
