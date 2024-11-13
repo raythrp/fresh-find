@@ -8,6 +8,6 @@ app.set('view engine', 'ejs');
 app.set('views', 'src/views')
 
 
-app.listen(9000, () => {
-  console.log('App listening on port 9000');
+app.listen(8080, () => {
+  console.log('App listening on port 8080');
 });
