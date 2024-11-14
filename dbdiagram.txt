@@ -4,6 +4,7 @@ Table users {
   email varchar
   name varchar
   birthdate date
+  buys_count integer
   address_number integer
   address_street varchar
   address_village varchar
@@ -21,6 +22,7 @@ Table sellers {
   email varchar
   store_name varchar
   birthdate date
+  sales_count integer
   address_number integer
   address_street varchar
   address_village varchar
@@ -38,6 +40,7 @@ Table products {
   id varchar [primary key]
   name varchar
   price integer
+  sold_count integer
   stock integer
   description varchar
   seller_id char(12)
@@ -55,19 +58,6 @@ Table product_photos {
 }
 
 Ref: product_photos.product_id > products.id
-
-Table product_ratings {
-  id varchar [primary key]
-  star integer
-  comment  varchar
-  user_id char(12)
-  product_id varchar
-  created_at datetime
-  updated_at datetime
-}
-
-Ref: product_ratings.product_id > products.id
-Ref: product_ratings.user_id > users.number
 
 Table transactions {
   id varchar [primary key]
