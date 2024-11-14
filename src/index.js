@@ -1,6 +1,9 @@
 const express = require('express');
+require('dotenv').config()
+const PORT = process.env.PORT;
 const bodyParser = require('body-parser');
 const path = require('path');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -10,6 +13,6 @@ app.set('view engine', 'ejs');
 app.set('views', 'src/views')
 
 
-app.listen(8080, () => {
-  console.log('App listening on port 8080');
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
 });
