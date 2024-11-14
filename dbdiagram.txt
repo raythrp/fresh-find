@@ -1,0 +1,86 @@
+Table users {
+  number char(12) [primary key]
+  photo varchar
+  email varchar
+  name varchar
+  birthdate date
+  address_number integer
+  address_street varchar
+  address_village varchar
+  address_subdistrict varchar
+  address_city varchar
+  address_province varchar
+  address_code integer
+  created_at datetime
+  updated_at datetime
+}
+
+Table sellers {
+  number char(12) [primary key]
+  photo varchar
+  email varchar
+  store_name varchar
+  birthdate date
+  address_number integer
+  address_street varchar
+  address_village varchar
+  address_subdistrict varchar
+  address_city varchar
+  address_province varchar
+  address_code integer
+  bank_account varchar
+  bank_name varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Table products {
+  id varchar [primary key]
+  name varchar
+  price integer
+  stock integer
+  description varchar
+  seller_id char(12)
+  created_at datetime
+  updated_at datetime
+}
+
+Ref: products.seller_id > sellers.number
+
+Table product_photos {
+  id varchar [primary key]
+  product_id varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Ref: product_photos.product_id > products.id
+
+Table product_ratings {
+  id varchar [primary key]
+  star integer
+  comment  varchar
+  user_id char(12)
+  product_id varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Ref: product_ratings.product_id > products.id
+Ref: product_ratings.user_id > users.number
+
+Table transactions {
+  id varchar [primary key]
+  product_amount integer
+  shipping_amount integer
+  product_id varchar
+  seller_id varchar
+  user_id varchar
+  status varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Ref: transactions.product_id > products.id
+Ref: transactions.seller_id > sellers.number
+Ref: transactions.user_id > users.number
