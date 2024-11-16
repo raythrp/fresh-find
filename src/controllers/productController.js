@@ -2,8 +2,12 @@ const productModel = require('../models/productModel');
 
 const getAllProducts = async (req, res) => {
   try {
-    const [products, _] = await productModel.getAllProducts();
-    res.json(products);
+    const products = await productModel.getAllProducts();
+    res.status(200).json({
+      message: 'Success',
+      user: req.user.number,
+      data: products[0]
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
