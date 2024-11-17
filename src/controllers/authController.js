@@ -2,13 +2,23 @@ const userModel = require('../models/userModel');
 const sellerModel = require('../models/sellerModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 // For registering new user
 const userRegister = async (req, res) => {
     const user = req.body;
-    const hashedPassword = bcrypt.hashSync(user.password, 10);
+    // Password Handling
+    let hashedPassword;
+    if (!user.password) {
+      return res.status(400).json({ message: user });
+    }
     try {
-      await userModel.createUser(user.number, hashedPassword, user.photo, user.email, user.name, user.birthdate, 0, user.address_number, user.address_street, user.address_village, user.address_subdistrict, user.address_city, user.address_province, user.address_code);
+      hashedPassword = bcrypt.hashSync(user.password, 10);
+    } catch (error) {
+      return res.status(500).json({ message: 'Password hashing failed', error: error.message });
+    }
+
+    // Insert data to database
+    try {
+      await userModel.createUser(user.number, hashedPassword, '', user.email, user.name, user.birthdate, 0, user.address_number, user.address_street, user.address_village, user.address_subdistrict, user.address_city, user.address_province, user.address_code);
       const responseData = await userModel.getCredentials(user.number);
       return res.status(201).json({ 
         message: 'Register success',
@@ -19,7 +29,6 @@ const userRegister = async (req, res) => {
         message: 'Register failed'
       });
     }
-
 };
 
 const userLogin = async (req, res) => {

@@ -1,21 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const userController = require('../controllers/authController');
+const authController = require('../controllers/authController');
+const userController = require('../controllers/userController');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+
+// Middleware for uploading file
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
 
 // For Auth
-router.post('/user/login', userController.userLogin);
+router.post('/user/login', authController.userLogin);
 router.post('/seller/login', );
-router.post('/user/register', userController.userRegister);
+router.post('/user/register', upload.single(), authController.userRegister);
 router.post('/seller/register', );
 
 // For Products
-router.get('/products', authenticateToken, productController.getAllProducts);
+router.get('/products', productController.getAllProducts);
 router.get('/products/:id', productController.getProductById);
 router.post('/products', productController.createProduct);
 router.put('/products/:id', productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
+
+// For user profile
+router.put('/user/details/photo', authenticateToken, upload.single('profilePhoto'), userController.updateProfilePhoto);
 
 // Middleware for authentication
 function authenticateToken(req, res, next) {
