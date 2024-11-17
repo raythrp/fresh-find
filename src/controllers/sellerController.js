@@ -14,15 +14,15 @@ const updateProfilePhoto = async (req, res) => {
   try {
     imageUrl = await uploadImage(newPhoto, 'seller_photos'); // folder "seller_photos" di GCP bucket
   } catch (error) {
-    return res.status(500).json({ message: 'Upload fail', error: error.message });
+    return res.status(500).json({ message: 'Upload fail', imageUrl: imageUrl });
   }
 
   // Insert image URL into database
   try {
     await sellerModel.updateSellerPhoto(number, imageUrl);
     return res.status(200).json({ message: 'Upload success', imageUrl: imageUrl });
-  } catch (error) {
-    return res.status(500).json({ message: 'Database update fail', error: error.message });
+  } catch {
+    return res.status(500).json({ message: 'Database update fail' });
   }
 };
 

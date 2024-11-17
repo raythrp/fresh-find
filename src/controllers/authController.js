@@ -62,17 +62,20 @@ const sellerRegister = async (req, res) => {
   const seller = req.body;
   let hashedPassword;
 
+  // Validasi jika password tidak diisi
   if (!seller.password) {
     return res.status(400).json({ message: 'Password is required' });
   }
 
   try {
+    // Hashing password
     hashedPassword = bcrypt.hashSync(seller.password, 10);
   } catch (error) {
-    return res.status(500).json({ message: 'Password hashing failed', error: error.message });
+    return res.status(500).json({ message: 'Password hashing failed' });
   }
 
   try {
+    // Membuat seller baru
     await sellerModel.createSeller(
       seller.number,
       hashedPassword,
@@ -91,15 +94,21 @@ const sellerRegister = async (req, res) => {
       seller.bank_account,
       seller.bank_name
     );
+
+    // Mengambil data seller setelah dibuat
     const responseData = await sellerModel.getCredentials(seller.number);
     return res.status(201).json({
       message: 'Seller registration successful',
       data: responseData[0],
     });
   } catch (error) {
-    return res.status(500).json({ message: 'Seller registration failed', error: error.message });
+    // Memberikan respons hanya dengan message tanpa properti "error"
+    return res.status(500).json({
+      message: 'Registration failed',
+    });
   }
 };
+
 
 const sellerLogin = async (req, res) => {
   const credentials = await sellerModel.getCredentials(req.body.number);

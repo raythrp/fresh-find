@@ -1,8 +1,15 @@
 const db = require('../config/database');
 
 const getCredentials = (number) => {
+  try {
   const SQLQuery = 'SELECT number, password FROM sellers WHERE number = ?';
   return db.query(SQLQuery, [number]);
+} catch (error) {
+  console.error('Error code:', error.code);  
+  console.error('Error message:', error.sqlMessage); 
+  console.error('SQL:', error.sql);  
+  throw error;
+}
 };
 
 const createSeller = async (
@@ -23,6 +30,7 @@ const createSeller = async (
   bankAccount,
   bankName
 ) => {
+  try {
   const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
   const updatedAt = createdAt;
 
@@ -54,6 +62,12 @@ const createSeller = async (
     createdAt,
     updatedAt,
   ]);
+} catch (error) {
+  console.error('Error code:', error.code);  
+  console.error('Error message:', error.sqlMessage); 
+  console.error('SQL:', error.sql);  
+  throw error;
+}
 };
 
 const updateSellerPhoto = async (number, imageUrl) => {
