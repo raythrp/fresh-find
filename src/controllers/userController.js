@@ -24,7 +24,7 @@ const updateProfilePhoto = async (req, res) => {
   } catch {
     return res.status(500).json({ message: 'Database update fail' });
   }
-}
+};
 
 module.exports = {
   updateProfilePhoto
