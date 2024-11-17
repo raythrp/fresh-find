@@ -23,7 +23,7 @@ router.post('/user/register', upload.single(), authController.userRegister);
 router.post('/seller/register', upload.single(), authController.sellerRegister);
 
 // For Products
-router.get('/products', productController.getAllProducts);
+router.get('/home', productController.getHomeProducts);
 router.get('/products/:id', productController.getProductById);
 router.post('/products', productController.createProduct);
 router.put('/products/:id', productController.updateProduct);

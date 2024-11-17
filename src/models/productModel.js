@@ -1,8 +1,19 @@
 const db = require('../config/database');
 
-const getAllProducts = () => {
-  const SQLQuery = 'SELECT * FROM products';
-  return db.execute(SQLQuery);
+const getHomeProducts = () => {
+  try {
+    const SQLQuery = 'SELECT id, name, price FROM products WHERE category = ?'
+    let result = [];
+    result.append(db.execute(SQLQuery, ['sayur']));
+    result.append(db.execute(SQLQuery, ['ikan']));
+    result.append(db.execute(SQLQuery, ['buah']));
+    return result;
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
 };
 
 const getProductById = (id) => {
@@ -26,7 +37,7 @@ const deleteProduct = (id) => {
 };
 
 module.exports = {
-  getAllProducts,
+  getHomeProducts,
   getProductById,
   createProduct,
   updateProduct,

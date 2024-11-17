@@ -53,6 +53,7 @@ CREATE TABLE products (
 CREATE TABLE product_photos (
   id VARCHAR PRIMARY KEY,
   product_id VARCHAR,
+  link VARCHAR,
   created_at DATETIME,
   updated_at DATETIME,
   FOREIGN KEY (product_id) REFERENCES products(id)

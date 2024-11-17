@@ -1,16 +1,16 @@
 const productModel = require('../models/productModel');
+const nanoid = require('nanoid');
 
-const getAllProducts = async (req, res) => {
+const getHomeProducts = async (req, res) => {
   try {
-    const products = await productModel.getAllProducts();
+    const products = await productModel.getHomeProducts();
     res.status(200).json({
       message: 'Success',
-      user: req.user.number,
-      data: products[0]
+      data: products
     });
-  } catch (err) {
+  } catch (error) {
     console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ message: 'Connection fail' });
   }
 };
 
@@ -69,7 +69,7 @@ const deleteProduct = async (req, res) => {
 };
 
 module.exports = {
-  getAllProducts,
+  getHomeProducts,
   getProductById,
   createProduct,
   updateProduct,
