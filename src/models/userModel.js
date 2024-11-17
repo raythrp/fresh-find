@@ -17,7 +17,7 @@ const getCredentials = (number) => {
 const getUserByNumber = (number) => {
   const SQLQuery = 'SELECT * FROM users WHERE number = ?';
   return db.query(SQLQuery, [number]);
-}
+};
 
 // For creating new user
 const createUser = async (number, hashedPassword, photo, email, name, birthdate, buys_count, address_number, address_street, address_village, address_subdistrict, address_city, address_province, address_code) => {
