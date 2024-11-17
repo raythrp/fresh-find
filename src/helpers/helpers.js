@@ -10,10 +10,10 @@ const bucket = gc.bucket('fresh_find') // should be your bucket name
  *   "originalname" and "buffer" as keys
  */
 
-const uploadImage = (file) => new Promise((resolve, reject) => {
+const uploadImage = (file,folder) => new Promise((resolve, reject) => {
   const { originalname, buffer } = file
 
-  const blob = bucket.file(`customer_photos/${originalname.replace(/ /g, "_")}`)
+  const blob = bucket.file(`${folder}/${originalname.replace(/ /g, "_")}`)
   const blobStream = blob.createWriteStream({
     resumable: false
   })

@@ -12,7 +12,7 @@ const updateProfilePhoto = async (req, res) => {
   // Handling image upload
   let imageUrl = '' 
   try {
-    imageUrl = await uploadImage(newPhoto);
+    imageUrl = await uploadImage(newPhoto,'customer_photos');
   } catch (error) {
     return res.status(500).json({ message: 'Upload fail', imageUrl: imageUrl });
   }

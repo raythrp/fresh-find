@@ -3,6 +3,7 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
+const sellerController = require('../controllers/sellerController')
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 
@@ -17,9 +18,9 @@ const upload = multer({
 
 // For Auth
 router.post('/user/login', authController.userLogin);
-router.post('/seller/login', );
+router.post('/seller/login', authController.sellerLogin);
 router.post('/user/register', upload.single(), authController.userRegister);
-router.post('/seller/register', );
+router.post('/seller/register', upload.single(), authController.sellerRegister);
 
 // For Products
 router.get('/products', productController.getAllProducts);
@@ -30,6 +31,8 @@ router.delete('/products/:id', productController.deleteProduct);
 
 // For user profile
 router.put('/user/details/photo', authenticateToken, upload.single('profilePhoto'), userController.updateProfilePhoto);
+// For seller profile
+router.put('/seller/details/photo',authenticateToken,upload.single('profilePhoto'), sellerController.updateProfilePhoto);
 
 // Middleware for authentication
 function authenticateToken(req, res, next) {
