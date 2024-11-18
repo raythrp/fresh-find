@@ -19,19 +19,20 @@ const upload = multer({
 // For Auth
 router.post('/user/login', authController.userLogin);
 router.post('/seller/login', authController.sellerLogin);
-router.post('/user/register', upload.single(), authController.userRegister);
-router.post('/seller/register', upload.single(), authController.sellerRegister);
+router.post('/user/register', authController.userRegister);
+router.post('/seller/register', authController.sellerRegister);
 
 // For Products
 router.get('/home', productController.getHomeProducts);
 router.get('/products/:id', productController.getProductById);
-router.post('/products', productController.createProduct);
+router.post('/products', authenticateToken, productController.createProduct);
+router.post('/products/photos', authenticateToken, upload.single('productPhoto'), productController.createProductPhoto);
 router.put('/products/:id', productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
 
-// For user profile
+// For Users
 router.put('/user/details/photo', authenticateToken, upload.single('profilePhoto'), userController.updateProfilePhoto);
-// For seller profile
+// For Sellers
 router.put('/seller/details/photo',authenticateToken,upload.single('profilePhoto'), sellerController.updateProfilePhoto);
 
 // Middleware for authentication

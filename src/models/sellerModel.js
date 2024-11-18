@@ -1,6 +1,6 @@
 const db = require('../config/database');
 
-const getCredentials = (number) => {
+const getCredentials = async (number) => {
   try {
   const SQLQuery = 'SELECT number, password FROM sellers WHERE number = ?';
   return db.query(SQLQuery, [number]);
