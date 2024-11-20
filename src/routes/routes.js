@@ -3,7 +3,9 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
-const sellerController = require('../controllers/sellerController')
+const sellerController = require('../controllers/sellerController');
+const transactionController = require('../controllers/transactionController');
+const wishlistController = require('../controllers/wishlistController');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 
@@ -32,8 +34,18 @@ router.delete('/products/:id', productController.deleteProduct);
 
 // For Users
 router.put('/user/details/photo', authenticateToken, upload.single('profilePhoto'), userController.updateProfilePhoto);
+
 // For Sellers
 router.put('/seller/details/photo',authenticateToken,upload.single('profilePhoto'), sellerController.updateProfilePhoto);
+
+// For transactions
+router.get('/transactions', authenticateToken, transactionController.getUserTransactions);
+router.get('/transactions', authenticateToken, transactionController.getSellerTransactions);
+
+// For wishlist
+router.get('/wishlist', authenticateToken, wishlistController.showWishlist);
+router.post('/wishlist/add', authenticateToken, wishlistController.addToWishList);
+router.delete('/wishlist/delete', authenticateToken, wishlistController.deleteFromWishlist);
 
 // Middleware for authentication
 function authenticateToken(req, res, next) {
