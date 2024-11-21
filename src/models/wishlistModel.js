@@ -2,8 +2,9 @@ const db = require('../config/database');
 
 const getUserWishlist = async (number) => {
   try {
-    const SQLQuery = 'SELECT * FROM wishlist WHERE user_id = ?';
-    return await db.execute(SQLQuery, [number])[0];
+    const SQLQuery = 'SELECT product_id FROM wishlist WHERE user_id = ?';
+    const result = await db.execute(SQLQuery, [number]);
+    return result[0];
   } catch (error) {
     console.error('Error code:', error.code);  
     console.error('Error message:', error.sqlMessage); 

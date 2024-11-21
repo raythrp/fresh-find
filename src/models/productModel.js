@@ -2,11 +2,13 @@ const db = require('../config/database');
 
 const getHomeProducts = async () => {
   try {
-    const SQLQuery = 'SELECT id, name, price FROM products WHERE category = ?'
+    const SQLQuery = 'SELECT id, name, price, category FROM products WHERE category = ?'
     let result = [];
-    result.append(db.execute(SQLQuery, ['sayur']));
-    result.append(db.execute(SQLQuery, ['ikan']));
-    result.append(db.execute(SQLQuery, ['buah']));
+    let categories = ['sayur', 'ikan', 'buah'];
+    let sayur = await db.execute(SQLQuery, [categories[0]]);
+    let ikan = await db.execute(SQLQuery, [categories[1]]);
+    let buah = await db.execute(SQLQuery, [categories[2]]);
+    result = [...sayur[0], ...ikan[0], ...buah[0]];
     return result;
   } catch (error) {
     console.error('Error code:', error.code);  
@@ -19,11 +21,16 @@ const getHomeProducts = async () => {
 const getHomeProductsPhoto = async (productIdArray) => {
   try {
     const SQLQuery = 'SELECT product_id, link FROM product_photos WHERE product_id = ?';
-    let result = [];
+    let responseData = [];
+    console.error(productIdArray[0]);
     for (let i = 0; i < 18; i++) {
-      result.append(db.execute(SQLQuery, [productIdArray[i]]));
+      if (!productIdArray[i]) {
+        continue;
+      }
+      const result = await db.execute(SQLQuery, [productIdArray[i].toString()]);
+      responseData.push(...result[0]);
     }
-    return result;
+    return responseData;
   } catch (error) {
     console.error('Error code:', error.code);  
     console.error('Error message:', error.sqlMessage); 

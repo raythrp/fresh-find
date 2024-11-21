@@ -8,6 +8,7 @@ const getHomeProducts = async (req, res) => {
 
     // Still not correct *stil assuming the array shape
     const productIds = products.map((item) => item.id);
+    console.log(productIds);
     const productPhotos = await productModel.getHomeProductsPhoto(productIds);
     res.status(200).json({
       message: 'Success',
@@ -15,7 +16,7 @@ const getHomeProducts = async (req, res) => {
       product_photos: productPhotos
     });
   } catch (error) {
-    console.error(err);
+    console.error(error);
     res.status(500).json({ message: 'Products retrieval fail' });
   }
 };
