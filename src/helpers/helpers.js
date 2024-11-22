@@ -27,4 +27,26 @@ const uploadImage = (file, folder) => new Promise((resolve, reject) => {
   .end(buffer)
 });
 
-module.exports = uploadImage;
+const getFormattedTimestamp = () => {
+  const now = new Date();
+
+  const pad = num => String(num).padStart(2, '0');
+
+  const year = now.getFullYear();
+  const month = pad(now.getMonth() + 1);
+  const day = pad(now.getDate());
+  const hours = pad(now.getHours());
+  const minutes = pad(now.getMinutes());
+  const seconds = pad(now.getSeconds());
+  const timezoneOffset = -now.getTimezoneOffset();
+  const sign = timezoneOffset >= 0 ? '+' : '-';
+  const offsetHours = pad(Math.floor(Math.abs(timezoneOffset) / 60));
+  const offsetMinutes = pad(Math.abs(timezoneOffset) % 60);
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${sign}${offsetHours}${offsetMinutes}`;
+};
+
+module.exports = {
+  uploadImage,
+  getFormattedTimestamp
+};

@@ -41,6 +41,9 @@ router.put('/seller/details/photo',authenticateToken,upload.single('profilePhoto
 // For transactions
 router.get('/transactions', authenticateToken, transactionController.getUserTransactions);
 router.get('/transactions', authenticateToken, transactionController.getSellerTransactions);
+router.get('/transactions/paymentlink', authenticateToken, transactionController.requestPaymentLink);
+// Webhook for Midtrans
+router.get();
 
 // For wishlist
 router.get('/wishlist', authenticateToken, wishlistController.showWishlist);
