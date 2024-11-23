@@ -12,6 +12,32 @@ const getCredentials = async (number) => {
 }
 };
 
+const getSellerById = async (number) => {
+  try {
+    const SQLQuery = 'SELECT * FROM sellers WHERE number = ?'
+    const responseData = await db.execute(SQLQuery, [number]);
+    return responseData[0];
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
+};
+
+const getSellerForProductById = async (number) => {
+  try {
+    const SQLQuery = 'SELECT number, photo, store_name, sales_count, address_province FROM sellers WHERE number = ?'
+    const responseData = await db.execute(SQLQuery, [number]);
+    return responseData[0];
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
+};
+
 const createSeller = async (
   number,
   hashedPassword,
@@ -88,4 +114,6 @@ module.exports = {
   updateSellerPhoto,
   getCredentials,
   createSeller,
+  getSellerById,
+  getSellerForProductById
 };

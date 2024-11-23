@@ -26,7 +26,7 @@ router.post('/seller/register', authController.sellerRegister);
 
 // For Products
 router.get('/home', productController.getHomeProducts);
-router.get('/products/:id', productController.getProductById);
+router.get('/products', productController.getProductById);
 router.post('/products', authenticateToken, productController.createProduct);
 router.post('/products/photos', authenticateToken, upload.single('productPhoto'), productController.createProductPhoto);
 router.put('/products/:id', productController.updateProduct);
@@ -43,7 +43,7 @@ router.get('/transactions', authenticateToken, transactionController.getUserTran
 router.get('/transactions', authenticateToken, transactionController.getSellerTransactions);
 router.get('/transactions/paymentlink', authenticateToken, transactionController.requestPaymentLink);
 // Webhook for Midtrans
-router.get();
+router.post('/transactions/payment-notification-handler', transactionController.createTransaction);
 
 // For wishlist
 router.get('/wishlist', authenticateToken, wishlistController.showWishlist);

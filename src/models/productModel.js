@@ -42,7 +42,8 @@ const getHomeProductsPhoto = async (productIdArray) => {
 const getProductById = async (id) => {
   try {
     const SQLQuery = 'SELECT * FROM products WHERE id = ?';
-    return db.execute(SQLQuery, [id]);
+    const responseData = await db.execute(SQLQuery, [id]);
+    return responseData[0];
   } catch (error) {
     console.error('Error code:', error.code);  
     console.error('Error message:', error.sqlMessage); 
@@ -50,6 +51,19 @@ const getProductById = async (id) => {
     throw error;
   }
 };
+
+const getProductPhotoById = async (product_id) => {
+  try {
+    const SQLQuery = 'SELECT * FROM product_photos WHERE product_id = ?';
+    const responseData = await db.execute(SQLQuery, [product_id]);
+    return responseData[0];
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
+}
 
 const createProduct = async (id, name, price, sold_count, stock, description, seller_id, category) => {
   try {
@@ -108,5 +122,6 @@ module.exports = {
   createProductPhoto,
   verifyProductOwner,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getProductPhotoById
 };

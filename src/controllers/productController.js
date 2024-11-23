@@ -1,4 +1,5 @@
 const productModel = require('../models/productModel');
+const sellerModel = require('../models/sellerModel.js');
 const { nanoid } = require('nanoid/non-secure');
 const uploadImage = require('../helpers/helpers.js');
 
@@ -23,13 +24,20 @@ const getHomeProducts = async (req, res) => {
 
 const getProductById = async (req, res) => {
   try {
-    const product = await productModel.getProductById(req.params.id);
+    const { product_id } = req.body
+    const product = await productModel.getProductById(product_id);  
+    const photos = await productModel.getProductPhotoById(product_id);
+    const seller = await sellerModel.getSellerForProductById(product[0].seller_id);
     if (product.length === 0) {
       res.status(404).json({ error: 'Product not found' });
     } else {
       res.status(200).json({
         message: 'Product found',
-        data: product[0]
+        data: {
+          productData: product,
+          productPhotos: photos,
+          sellerData: seller
+        }
       });
     }
   } catch (err) {
