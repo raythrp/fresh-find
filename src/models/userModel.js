@@ -50,9 +50,29 @@ const updateUserPhoto = async (number, imageUrl) => {
   }
 };
 
+const updateUserDetails = async (number, name, email, address_number, address_street, address_city, address_village, address_subdistrict, address_province, address_code) => {
+  try {
+      const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const SQLQuery = `
+          UPDATE users 
+          SET name = ?, email = ?, address_number = ?, address_street = ?, address_city = ?, address_village = ?, address_subdistrict = ?, address_province = ?, address_code = ?, updated_at = ? 
+          WHERE number = ?
+      `;
+      const [result] = await db.execute(SQLQuery, [name, email, address_number, address_street, address_city, address_village, address_subdistrict, address_province, address_code, updatedAt, number]);
+      return result;
+  } catch (error) {
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.sqlMessage);
+      console.error('SQL:', error.sql);
+      throw error;
+  }
+};
+
+
 module.exports = {
   getCredentials,
   getUserByNumber,
   createUser,
-  updateUserPhoto
+  updateUserPhoto,
+  updateUserDetails
 };

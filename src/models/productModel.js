@@ -104,9 +104,22 @@ const createProductPhoto = async (id, product_id, link) => {
   }
 };
 
-const updateProduct = async (id, name, price, sold_count, stock, description, seller_id) => {
-  const SQLQuery = 'UPDATE products SET name = ?, price = ?, sold_count = ?, stock = ?, description = ?, seller_id = ? WHERE id = ?';
-  return db.execute(SQLQuery, [name, price, sold_count, stock, description, seller_id, id]);
+const updateProductDetails = async (id, name, price, stock, description, category, seller_id) => {
+  try {
+      const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const SQLQuery = `
+          UPDATE products 
+          SET name = ?, price = ?, stock = ?, description = ?, category = ?, updated_at = ? 
+          WHERE id = ? AND seller_id = ?
+      `;
+      const [result] = await db.execute(SQLQuery, [name, price, stock, description, category, updatedAt, id, seller_id]);
+      return result;
+  } catch (error) {
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.sqlMessage);
+      console.error('SQL:', error.sql);
+      throw error;
+  }
 };
 
 const deleteProduct = async (id) => {
@@ -121,7 +134,7 @@ module.exports = {
   createProduct,
   createProductPhoto,
   verifyProductOwner,
-  updateProduct,
+  updateProductDetails,
   deleteProduct,
   getProductPhotoById
 };

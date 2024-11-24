@@ -110,10 +110,29 @@ const updateSellerPhoto = async (number, imageUrl) => {
   }
 };
 
+const updateSellerDetails = async (number, store_name, email, address_number, address_street, address_city, address_village, address_subdistrict, address_province, address_code, bank_account, bank_name) => {
+  try {
+      const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const SQLQuery = `
+          UPDATE sellers 
+          SET store_name = ?, email = ?, address_number = ?, address_street = ?, address_city = ?, address_village = ?, address_subdistrict = ?, address_province = ?, address_code = ?, bank_account = ?, bank_name = ?, updated_at = ? 
+          WHERE number = ?
+      `;
+      const [result] = await db.execute(SQLQuery, [store_name, email, address_number, address_street, address_city, address_village, address_subdistrict, address_province, address_code, bank_account, bank_name, updatedAt, number]);
+      return result;
+  } catch (error) {
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.sqlMessage);
+      console.error('SQL:', error.sql);
+      throw error;
+  }
+};
+
 module.exports = {
   updateSellerPhoto,
   getCredentials,
   createSeller,
   getSellerById,
-  getSellerForProductById
+  getSellerForProductById,
+  updateSellerDetails
 };

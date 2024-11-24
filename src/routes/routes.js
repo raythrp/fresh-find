@@ -29,14 +29,16 @@ router.get('/home', productController.getHomeProducts);
 router.get('/products', productController.getProductById);
 router.post('/products', authenticateToken, productController.createProduct);
 router.post('/products/photos', authenticateToken, upload.single('productPhoto'), productController.createProductPhoto);
-router.put('/products/:id', productController.updateProduct);
+router.put('/products/update', authenticateToken, productController.updateProductDetails);
 router.delete('/products/:id', productController.deleteProduct);
 
 // For Users
 router.put('/user/details/photo', authenticateToken, upload.single('profilePhoto'), userController.updateProfilePhoto);
+router.put('/user/details', authenticateToken, userController.updateUserDetails);
 
 // For Sellers
 router.put('/seller/details/photo',authenticateToken,upload.single('profilePhoto'), sellerController.updateProfilePhoto);
+router.put('/seller/details', authenticateToken, sellerController.updateSellerDetails);
 
 // For transactions
 router.get('/transactions', authenticateToken, transactionController.getUserTransactions);

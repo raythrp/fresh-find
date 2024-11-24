@@ -91,20 +91,26 @@ const createProductPhoto = async (req, res) => {
   }
 };
 
-const updateProduct = async (req, res) => {
+const updateProductDetails = async (req, res) => {
+  const { product_id, name, price, stock, description, category } = req.body;
+  const seller_id = req.user.number; // Mengambil seller_id dari token
+
+  if (!product_id) {
+      return res.status(400).json({ message: 'Product ID is required' });
+  }
+
   try {
-    const { name, price, sold_count, stock, description, seller_id } = req.body;
-    const [result, _] = await productModel.updateProduct(req.params.id, name, price, sold_count, stock, description, seller_id);
-    if (result.affectedRows === 0) {
-      res.status(404).json({ error: 'Product not found' });
-    } else {
-      res.json({ message: 'Product updated' });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+      const result = await productModel.updateProductDetails(product_id, name, price, stock, description, category, seller_id);
+      if (result.affectedRows === 0) {
+          return res.status(403).json({ message: 'Unauthorized to update this product or Product not found' });
+      }
+      res.status(200).json({ message: 'Product updated successfully' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Failed to update product' });
   }
 };
+
 
 const deleteProduct = async (req, res) => {
   try {
@@ -125,6 +131,6 @@ module.exports = {
   getProductById,
   createProduct,
   createProductPhoto,
-  updateProduct,
+  updateProductDetails,
   deleteProduct
 };
