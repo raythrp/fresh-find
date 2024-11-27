@@ -119,7 +119,8 @@ const requestPaymentLink = async (req, res) => {
   // Request to Payment Gateway
   try {
     const response = await axios.post(url, body, { headers });
-    await transactionModel.createTransaction(id, amount, shippingCost, price * amount + shippingCost, product_id, seller_id, number, 'unpaid');
+    const totalShippingCost = shippingCost * amount;
+    await transactionModel.createTransaction(id, amount, totalShippingCost, price * amount + totalShippingCost, product_id, seller_id, number, 'unpaid');
     res.status(200).json({ message: 'Success', paymentData: response.data, productId: product_id, grossAmount: `${gross_amount}.00` });
     console.error(id);
   } catch (error) {
