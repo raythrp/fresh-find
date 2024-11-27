@@ -46,7 +46,22 @@ const getFormattedTimestamp = () => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${sign}${offsetHours}${offsetMinutes}`;
 };
 
+const getLocalTime = () => {
+  const now = new Date();
+
+  const options = { timeZone: 'Asia/Jakarta', hour12: false };
+  const year = now.toLocaleString('en-GB', { ...options, year: 'numeric' });
+  const month = now.toLocaleString('en-GB', { ...options, month: '2-digit' });
+  const day = now.toLocaleString('en-GB', { ...options, day: '2-digit' });
+  const hours = now.toLocaleString('en-GB', { ...options, hour: '2-digit' });
+  const minutes = now.toLocaleString('en-GB', { ...options, minute: '2-digit' });
+  const seconds = now.toLocaleString('en-GB', { ...options, second: '2-digit' });
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 module.exports = {
   uploadImage,
-  getFormattedTimestamp
+  getFormattedTimestamp,
+  getLocalTime
 };

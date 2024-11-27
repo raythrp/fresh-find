@@ -46,7 +46,7 @@ const getSellerTransactions = async (req, res) => {
 
 const requestPaymentLink = async (req, res) => {
   const id = nanoid(16);
-  const { product_id, price, amount, shippingCost, product_name, category, name, email } = req.body;
+  const { product_id, price, amount, shippingCost, product_name, category, name, email, seller_id } = req.body;
   const number = req.user.number;
 
 
@@ -118,6 +118,7 @@ const requestPaymentLink = async (req, res) => {
   // Request to Payment Gateway
   try {
     const response = await axios.post(url, body, { headers });
+    await transactionModel.createTransaction(id, amount, shippingCost, price * amount + shippingCost, product_id, seller_id, number, 'unpaid');
     res.status(200).json({ message: 'Success', paymentData: response.data, productId: product_id });
     console.error(id);
   } catch (error) {
@@ -127,9 +128,18 @@ const requestPaymentLink = async (req, res) => {
   }
 };
 
-const createTransaction = async (req, res) => {
-
-};  
+const updateTransactionStatusForMidtrans = async (req, res) => {
+  try {
+    const { transaction_id, transaction_status } = req.body;
+    if (transaction_status == 'capture') {
+      await transactionModel.updateTransactionStatus(transaction_id, 'diajukan');
+      return res.status(200).json({ message: 'Success' })
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Transaction update fail'});
+  }
+};
 
 const updateTransactionStatusForUser = async (req, res) => {
   try {
@@ -162,5 +172,5 @@ module.exports = {
   updateTransactionStatusForUser,
   updateTransactionStatusForSeller,
   requestPaymentLink,
-  createTransaction
+  updateTransactionStatusForMidtrans
 }

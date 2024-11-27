@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const helpers = require('../helpers/helpers.js');
 
 const getHomeProducts = async () => {
   try {
@@ -67,7 +68,7 @@ const getProductPhotoById = async (product_id) => {
 
 const createProduct = async (id, name, price, sold_count, stock, description, seller_id, category) => {
   try {
-  const created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const created_at = helpers.getLocalTime();
   const updated_at = created_at;
   const SQLQuery = 'INSERT INTO products (id, name, price, sold_count, stock, description, seller_id, category, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
   return db.execute(SQLQuery, [id, name, price, sold_count, stock, description, seller_id, category, created_at, updated_at]);
@@ -93,7 +94,7 @@ const verifyProductOwner = async (product_id, seller_id) => {
 
 const createProductPhoto = async (id, product_id, link) => {
   try {
-    const created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const created_at = helpers.getLocalTime();
     const SQLQuery = 'INSERT INTO product_photos (id, product_id, link, created_at) VALUES (?, ?, ?, ?)';
     return db.execute(SQLQuery, [id, product_id, link, created_at]);
   } catch (error) {
@@ -106,7 +107,8 @@ const createProductPhoto = async (id, product_id, link) => {
 
 const updateProductDetails = async (id, name, price, stock, description, category, seller_id) => {
   try {
-      const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const updatedAt = helpers.getLocalTime();
+      console.error(updatedAt);
       const SQLQuery = `
           UPDATE products 
           SET name = ?, price = ?, stock = ?, description = ?, category = ?, updated_at = ? 

@@ -15,7 +15,7 @@ const getUserWishlist = async (number) => {
 
 const createWish = async (number, product_id) => {
   try {
-    const created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const created_at = helpers.getLocalTime();
     const updated_at = created_at;
     const SQLQuery = 'INSERT INTO wishlist (product_id, user_id, created_at, updated_at) VALUES (?, ?, ?, ?)'
     return db.execute(SQLQuery, [product_id, number, created_at, updated_at]);

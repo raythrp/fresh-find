@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const helpers = require('../helpers/helpers.js');
 
 const getTransactionBySellerId = async (id) => {
   try {
@@ -36,7 +37,7 @@ const getTransactionByUserId = async (id) => {
 
 const updateTransactionStatus = async (id, status) => {
   try {
-    const updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const updated_at = helpers.getLocalTime();
     const SQLQuery = 'UPDATE transactions SET status = ?, updated_at = ? WHERE id = ?';
     db.execute(SQLQuery, [status, updated_at, id]);
   } catch (error) {
@@ -49,7 +50,7 @@ const updateTransactionStatus = async (id, status) => {
 
 const createTransaction = async (id, product_amount, shipping_amount, total_amount, product_id, seller_id, user_id, status) => {
   try {
-    const created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const created_at = helpers.getLocalTime();
     const updated_at = created_at;
     const SQLQuery = 'INSERT INTO transactions (id, product_amount, shipping_amount, total_amount, product_id, seller_id, user_id, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     return db.execute(SQLQuery, [id, product_amount, shipping_amount, total_amount, product_id, seller_id, user_id, status, created_at, updated_at]);

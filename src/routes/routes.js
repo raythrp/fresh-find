@@ -45,7 +45,7 @@ router.get('/transactions', authenticateToken, transactionController.getUserTran
 router.get('/transactions', authenticateToken, transactionController.getSellerTransactions);
 router.get('/transactions/paymentlink', authenticateToken, transactionController.requestPaymentLink);
 // Webhook for Midtrans
-router.post('/transactions/payment-notification-handler', transactionController.createTransaction);
+router.post('/transactions/payment-notification-handler', transactionController.updateTransactionStatusForMidtrans);
 
 // For wishlist
 router.get('/wishlist', authenticateToken, wishlistController.showWishlist);

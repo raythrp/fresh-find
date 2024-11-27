@@ -22,7 +22,7 @@ const getUserByNumber = (number) => {
 // For creating new user
 const createUser = async (number, hashedPassword, photo, email, name, birthdate, buys_count, address_number, address_street, address_village, address_subdistrict, address_city, address_province, address_code) => {
   try {
-    const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const createdAt = helpers.getLocalTime();
     const updatedAt = createdAt;
     const SQLQuery = 'INSERT INTO users (number, password, photo, email, name, birthdate, buys_count, address_number, address_street, address_village, address_subdistrict, address_city, address_province, address_code, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const [result, _] = await db.execute(SQLQuery, [number, hashedPassword, photo, email, name, birthdate, buys_count, address_number, address_street, address_village, address_subdistrict, address_city, address_province, address_code, createdAt, updatedAt]);
@@ -38,8 +38,8 @@ const createUser = async (number, hashedPassword, photo, email, name, birthdate,
 // For updating profile photo
 const updateUserPhoto = async (number, imageUrl) => {
   try {
-    const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ')
-    const SQLQuery = 'UPDATE users SET photo = ?, updated_at = ? WHERE number = ?;'
+    const updatedAt = helpers.getLocalTime();
+    const SQLQuery = 'UPDATE users SET photo = ?, updated_at = ? WHERE number = ?;';
     const result = await db.execute(SQLQuery, [imageUrl, updatedAt, number]);
     return result;
   } catch (error) {
@@ -52,7 +52,7 @@ const updateUserPhoto = async (number, imageUrl) => {
 
 const updateUserDetails = async (number, name, email, address_number, address_street, address_city, address_village, address_subdistrict, address_province, address_code) => {
   try {
-      const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const updatedAt = helpers.getLocalTime();
       const SQLQuery = `
           UPDATE users 
           SET name = ?, email = ?, address_number = ?, address_street = ?, address_city = ?, address_village = ?, address_subdistrict = ?, address_province = ?, address_code = ?, updated_at = ? 

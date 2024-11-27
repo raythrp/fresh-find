@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const helpers = require('../helpers/helpers.js');
 
 const getCredentials = async (number) => {
   try {
@@ -57,7 +58,7 @@ const createSeller = async (
   bankName
 ) => {
   try {
-  const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  const createdAt = helpers.getLocalTime();
   const updatedAt = createdAt;
 
   const SQLQuery = `
@@ -98,7 +99,7 @@ const createSeller = async (
 
 const updateSellerPhoto = async (number, imageUrl) => {
   try {
-    const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const updatedAt = helpers.getLocalTime();
     const SQLQuery = 'UPDATE sellers SET photo = ?, updated_at = ? WHERE number = ?;';
     const result = await db.execute(SQLQuery, [imageUrl, updatedAt, number]);
     return result;
@@ -112,7 +113,7 @@ const updateSellerPhoto = async (number, imageUrl) => {
 
 const updateSellerDetails = async (number, store_name, email, address_number, address_street, address_city, address_village, address_subdistrict, address_province, address_code, bank_account, bank_name) => {
   try {
-      const updatedAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const updatedAt = helpers.getLocalTime();
       const SQLQuery = `
           UPDATE sellers 
           SET store_name = ?, email = ?, address_number = ?, address_street = ?, address_city = ?, address_village = ?, address_subdistrict = ?, address_province = ?, address_code = ?, bank_account = ?, bank_name = ?, updated_at = ? 
