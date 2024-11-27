@@ -133,10 +133,11 @@ const requestPaymentLink = async (req, res) => {
 const updateTransactionStatusForMidtrans = async (req, res) => {
   try {
     const { order_id, transaction_status, gross_amount, signature_key, fraud_status} = req.body;
-    const signatureKeyComparer = sha512(`${order_id}200${gross_amount}${process.env.MIDTRANS_SERVER_KEY}`)
+    const signatureKeyComparer = sha512(`${order_id}200${gross_amount}${process.env.MIDTRANS_SERVER_KEY}`);
+    const id = order_id.slice(0, 16);
     if (signatureKeyComparer == signature_key) {
       if (transaction_status == 'capture' || transaction_status == 'settlement' && fraud_status == 'accept') {
-        await transactionModel.updateTransactionStatus(order_id, 'diajukan');
+        await transactionModel.updateTransactionStatus(id, 'diajukan');
         return res.status(200).json({ message: 'Success' });
       }
     }
