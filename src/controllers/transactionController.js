@@ -131,12 +131,12 @@ const requestPaymentLink = async (req, res) => {
 
 const updateTransactionStatusForMidtrans = async (req, res) => {
   try {
-    const { order_id, transaction_status, gross_amount, signature_key} = req.body;
+    const { order_id, transaction_status, gross_amount, signature_key, fraud_status} = req.body;
     const signatureKeyComparer = sha512(`${order_id}200${gross_amount}${process.env.MIDTRANS_SERVER_KEY}`)
     if (signatureKeyComparer == signature_key) {
-      if (transaction_status == 'capture' || transaction_status == 'capture') {
+      if (transaction_status == 'capture' || transaction_status == 'settlement' && fraud_status == 'accept') {
         await transactionModel.updateTransactionStatus(order_id, 'diajukan');
-        return res.status(200).json({ message: 'Success' })
+        return res.status(200).json({ message: 'Success' });
       }
     }
     return res.status(500).json({ message: 'Transaction update fail'});
