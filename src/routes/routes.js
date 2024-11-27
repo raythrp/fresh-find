@@ -41,9 +41,11 @@ router.put('/seller/details/photo',authenticateToken,upload.single('profilePhoto
 router.put('/seller/details', authenticateToken, sellerController.updateSellerDetails);
 
 // For transactions
-router.get('/transactions', authenticateToken, transactionController.getUserTransactions);
-router.get('/transactions', authenticateToken, transactionController.getSellerTransactions);
+router.get('/transactions/user', authenticateToken, transactionController.getUserTransactions);
+router.get('/transactions/seller', authenticateToken, transactionController.getSellerTransactions);
 router.get('/transactions/paymentlink', authenticateToken, transactionController.requestPaymentLink);
+router.put('/transactions/status/user', authenticateToken, transactionController.updateTransactionStatusForUser);
+router.put('/transactions/status/seller', authenticateToken, transactionController.updateTransactionStatusForSeller);
 // Webhook for Midtrans
 router.post('/transactions/payment-notification-handler', transactionController.updateTransactionStatusForMidtrans);
 

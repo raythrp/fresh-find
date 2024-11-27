@@ -48,6 +48,32 @@ const updateTransactionStatus = async (id, status) => {
   }
 };
 
+const updateTransactionStatusUserAuthenticated = async (id, status, number) => {
+  try {
+    const updated_at = helpers.getLocalTime();
+    const SQLQuery = 'UPDATE transactions SET status = ?, updated_at = ? WHERE id = ? AND user_id = ?';
+    db.execute(SQLQuery, [status, updated_at, id, number]);
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
+};
+
+const updateTransactionStatusSellerAuthenticated = async (id, status, number) => {
+  try {
+    const updated_at = helpers.getLocalTime();
+    const SQLQuery = 'UPDATE transactions SET status = ?, updated_at = ? WHERE id = ? AND seller_id = ?';
+    db.execute(SQLQuery, [status, updated_at, id, number]);
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
+};
+
 const createTransaction = async (id, product_amount, shipping_amount, total_amount, product_id, seller_id, user_id, status) => {
   try {
     const created_at = helpers.getLocalTime();
@@ -67,5 +93,7 @@ module.exports = {
   getTransactionById,
   getTransactionByUserId,
   updateTransactionStatus,
-  createTransaction
+  createTransaction,
+  updateTransactionStatusSellerAuthenticated, 
+  updateTransactionStatusUserAuthenticated
 }

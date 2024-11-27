@@ -2,6 +2,7 @@ const transactionModel = require('../models/transactionModel.js');
 const helpers = require('../helpers/helpers.js');
 const { nanoid } = require('nanoid/non-secure');
 const axios = require('axios');
+const { sha512 } = require('js-sha512');
 
 const getTransactionById = async () => {
   try {
@@ -27,7 +28,7 @@ const getUserTransactions = async (req, res) => {
   try {
     const number = req.user.number;
     const transactions = await transactionModel.getTransactionByUserId(number);
-    res.status(200).json({ message: 'Success', data: transactions});
+    res.status(200).json({ message: 'Success', data: transactions[0], number: number});
   } catch {
     console.log(error);
     res.status(500).json({ message: 'Transaction retrieval fail'});
@@ -37,8 +38,8 @@ const getUserTransactions = async (req, res) => {
 const getSellerTransactions = async (req, res) => {
   try {
     const number = req.user.number;
-    const responseData = await transactionModel.getTransactionBySellerId(number);
-    res.status(200).json({ message: 'Success', data: responseData});
+    const transactions = await transactionModel.getTransactionBySellerId(number);
+    res.status(200).json({ message: 'Success', data: transactions[0], number: number});
   } catch {
     res.status(500).json({ message: 'Transaction retrieval fail'});
   }
@@ -119,7 +120,7 @@ const requestPaymentLink = async (req, res) => {
   try {
     const response = await axios.post(url, body, { headers });
     await transactionModel.createTransaction(id, amount, shippingCost, price * amount + shippingCost, product_id, seller_id, number, 'unpaid');
-    res.status(200).json({ message: 'Success', paymentData: response.data, productId: product_id });
+    res.status(200).json({ message: 'Success', paymentData: response.data, productId: product_id, grossAmount: `${gross_amount}.00` });
     console.error(id);
   } catch (error) {
     console.error(error);
@@ -130,11 +131,13 @@ const requestPaymentLink = async (req, res) => {
 
 const updateTransactionStatusForMidtrans = async (req, res) => {
   try {
-    const { transaction_id, transaction_status } = req.body;
-    if (transaction_status == 'capture') {
-      await transactionModel.updateTransactionStatus(transaction_id, 'diajukan');
+    const { order_id, transaction_status, gross_amount, signature_key} = req.body;
+    const signatureKeyComparer = sha512(`${order_id}200${gross_amount}${process.env.MIDTRANS_SERVER_KEY}`)
+    if (signatureKeyComparer == signature_key && transaction_status == 'capture') {
+      await transactionModel.updateTransactionStatus(order_id, 'diajukan');
       return res.status(200).json({ message: 'Success' })
     }
+    return res.status(500).json({ message: 'Transaction update fail'});
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Transaction update fail'});
@@ -144,8 +147,9 @@ const updateTransactionStatusForMidtrans = async (req, res) => {
 const updateTransactionStatusForUser = async (req, res) => {
   try {
     const { id } = req.body;
+    const number = req.user.number;
     const status = 'selesai';
-    await transactionModel.updateTransactionStatus(id, status);
+    await transactionModel.updateTransactionStatus(id, status, number);
     res.status(200).json({ message: 'Success'});
   } catch (error) {
     console.log(error);
@@ -156,8 +160,9 @@ const updateTransactionStatusForUser = async (req, res) => {
 const updateTransactionStatusForSeller = async (req, res) => {
   try {
     const { id } = req.body;
+    const number = req.user.number;
     const status = 'diproses';
-    await transactionModel.updateTransactionStatus(id, status);
+    await transactionModel.updateTransactionStatus(id, status, number);
     res.status(200).json({ message: 'Success'});
   } catch (error) {
     console.log(error);
