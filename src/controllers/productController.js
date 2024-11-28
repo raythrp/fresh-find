@@ -79,6 +79,7 @@ const createProductPhoto = async (req, res) => {
   try {
     imageUrl = await uploadImage(newPhoto, 'product_photos');
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ message: 'Upload fail'});
   }
 
