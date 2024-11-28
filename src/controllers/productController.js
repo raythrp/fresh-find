@@ -1,7 +1,7 @@
 const productModel = require('../models/productModel');
 const sellerModel = require('../models/sellerModel.js');
 const { nanoid } = require('nanoid/non-secure');
-const uploadImage = require('../helpers/helpers.js');
+const helpers = require('../helpers/helpers.js');
 
 const getHomeProducts = async (req, res) => {
   try {
@@ -77,7 +77,7 @@ const createProductPhoto = async (req, res) => {
   // Handling image upload
   let imageUrl = '' 
   try {
-    imageUrl = await uploadImage(newPhoto, 'product_photos');
+    imageUrl = await helpers.uploadImage(newPhoto, 'product_photos');
   } catch (error) {
     console.error(error)
     return res.status(500).json({ message: 'Upload fail'});
