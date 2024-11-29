@@ -54,8 +54,8 @@ const requestPaymentLink = async (req, res) => {
 
   // Product Stock Check
   const productStock = await productModel.verifyProductStock(product_id, seller_id);
-  if (productStock[0].stock < amount || productStock[0].stock != 0) {
-    return res.status(422).json({ message: 'Insufficient stock' });
+  if (productStock[0].stock < amount || productStock[0].stock == 0 || productStock[0].price != price) {
+    return res.status(422).json({ message: 'Unable to process transaction' });
   }
 
   const number = req.user.number;
@@ -93,7 +93,7 @@ const requestPaymentLink = async (req, res) => {
     "usage_limit":  1,
     "expiry": {
       "start_time": helpers.getFormattedTimestamp,
-      "duration": 10,
+      "duration": 40,
       "unit": "minutes"
     },
     "enabled_payments": [
@@ -150,7 +150,11 @@ const updateTransactionStatusForMidtrans = async (req, res) => {
         const transactionDetails = await transactionModel.getTransactionByIdUnauthenticated(id);
         const sellerId = transactionDetails[0][0].seller_id;
         const productAmount = transactionDetails[0][0].product_amount;
-        await productModel.updateProductForSuccessfulTransaction(id, sellerId, productAmount);
+        const productId = transactionDetails[0][0].product_id;
+        console.error(productAmount);
+        console.error(sellerId);
+        console.error(id);
+        await productModel.updateProductForSuccessfulTransaction(productId, sellerId, productAmount);
         return res.status(200).json({ message: 'Success' });
       }
     }

@@ -94,7 +94,7 @@ const verifyProductOwner = async (product_id, seller_id) => {
 
 const verifyProductStock = async (product_id, seller_id) => {
   try {
-    const SQLQuery = 'SELECT stock FROM products WHERE id = ? AND seller_id = ?';
+    const SQLQuery = 'SELECT stock, price FROM products WHERE id = ? AND seller_id = ?';
     const result = await db.execute(SQLQuery, [product_id, seller_id]);
     return result[0];
   } catch (err) {
@@ -149,7 +149,7 @@ const deleteProduct = async (id) => {
 
 const getProductsByKeyword = async (keyword) => {
   try {
-    const SQLQuery = 'SELECT id, name, price, stock, sold_count category FROM products WHERE name LIKE %?% ORDER BY sold_count ASC';
+    const SQLQuery = 'SELECT id, name, price, stock, sold_count, category FROM products WHERE name LIKE ? ORDER BY sold_count DESC';
     const result = await db.execute(SQLQuery, [keyword]);
     return result[0]; 
   } catch (error) {

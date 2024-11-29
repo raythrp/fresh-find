@@ -3,7 +3,7 @@ const helpers = require('../helpers/helpers.js');
 
 const getTransactionBySellerId = async (id) => {
   try {
-    const SQLQuery = 'SELECT * FROM transactions WHERE seller_id = ?';
+    const SQLQuery = 'SELECT * FROM transactions WHERE seller_id = ? ORDER BY created_at DESC';
     return db.execute(SQLQuery, [id]);
   } catch (error) {
     console.error('Error code:', error.code);  
@@ -41,7 +41,7 @@ const getTransactionByIdUnauthenticated = async (id) => {
 
 const getTransactionByUserId = async (id) => {
   try {
-    const SQLQuery = 'SELECT * FROM transactions WHERE user_id = ?';
+    const SQLQuery = 'SELECT * FROM transactions WHERE user_id = ? ORDER BY created_at DESC';
     return db.execute(SQLQuery, [id]);
   } catch (error) {
     console.error('Error code:', error.code);  

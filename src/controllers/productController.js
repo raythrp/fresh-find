@@ -130,7 +130,7 @@ const deleteProduct = async (req, res) => {
 const searchProducts = async (req, res) => {
   try {
     const { keyword } = req.body;
-    const products = await productModel.getProductsByKeyword(keyword);
+    const products = await productModel.getProductsByKeyword(`%${keyword}%`);
     res.status(200).json({ message: 'Success', data: products });
   } catch (err) {
     console.error(err);
