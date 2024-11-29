@@ -12,10 +12,12 @@ const getTransactionBySellerId = async (id) => {
     throw error;
   }
 };
-const getTransactionById = async (id) => {
+
+const getTransactionById = async (id, number) => {
   try {
-    const SQLQuery = 'SELECT * FROM transactions WHERE id = ?';
-    return db.execute(SQLQuery, [id]);
+    const SQLQuery = 'SELECT * FROM transactions WHERE id = ? AND (seller_id = ? OR user_id = ?)';
+    const result = db.execute(SQLQuery, [id, number, number]);
+    return result;
   } catch (error) {
     console.error('Error code:', error.code);  
     console.error('Error message:', error.sqlMessage); 
@@ -23,6 +25,7 @@ const getTransactionById = async (id) => {
     throw error;
   }
 };
+
 const getTransactionByUserId = async (id) => {
   try {
     const SQLQuery = 'SELECT * FROM transactions WHERE user_id = ?';

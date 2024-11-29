@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const helpers = require('../helpers/helpers.js');
 
 // Getting password for auth
 const getCredentials = (number) => {
@@ -68,11 +69,25 @@ const updateUserDetails = async (number, name, email, address_number, address_st
   }
 };
 
+const updateUserBuysCount = async (id, amount) => {
+  try {
+    const SQLQuery = 'UPDATE users SET buys_count = buys_count + ?, updated_at = ? WHERE number = ?';
+    const updated_at = helpers.getLocalTime();
+    await db.execute(SQLQuery, [amount, updated_at, id]);
+  } catch (error) {
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.sqlMessage);
+      console.error('SQL:', error.sql);
+      throw error;
+  }
+};
+
 
 module.exports = {
   getCredentials,
   getUserByNumber,
   createUser,
   updateUserPhoto,
-  updateUserDetails
+  updateUserDetails,
+  updateUserBuysCount
 };

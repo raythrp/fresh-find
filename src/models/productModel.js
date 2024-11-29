@@ -90,6 +90,17 @@ const verifyProductOwner = async (product_id, seller_id) => {
     console.error('SQL:', error.sql);  
     throw error;
   }
+};
+
+const verifyProductStock = async (product_id, seller_id) => {
+  try {
+    const SQLQuery = 'SELECT stock FROM products WHERE id = ? AND seller_id = ?';
+    const result = await db.execute(SQLQuery, [product_id, seller_id]);
+    return result[0];
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
 const createProductPhoto = async (id, product_id, link) => {
@@ -125,9 +136,42 @@ const updateProductDetails = async (id, name, price, stock, description, categor
 };
 
 const deleteProduct = async (id) => {
-  const SQLQuery = 'DELETE FROM products WHERE id = ?';
-  return db.execute(SQLQuery, [id]);
+  try {
+    const SQLQuery = 'DELETE FROM products WHERE id = ?';
+    return db.execute(SQLQuery, [id]);
+  } catch (error) {
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.sqlMessage);
+    console.error('SQL:', error.sql);
+    throw error;
+}
 };
+
+const getProductsByKeyword = async (keyword) => {
+  try {
+    const SQLQuery = 'SELECT id, name, price, stock, sold_count category FROM products WHERE name LIKE %?% ORDER BY sold_count ASC';
+    const result = await db.execute(SQLQuery, [keyword]);
+    return result[0]; 
+  } catch (error) {
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.sqlMessage);
+    console.error('SQL:', error.sql);
+    throw error;
+  }
+};
+
+const updateProductForSuccessfulTransaction = async (id, seller_id, amount) => {
+  try {
+    const SQLQuery = 'UPDATE products SET stock = stock - ?, sold_count = sold_count + ?, updated_at = ? WHERE id = ? AND seller_id = ?';
+    const updated_at = helpers.getLocalTime();
+    await db.execute(SQLQuery, [amount, amount, updated_at, id, seller_id]);
+  } catch (error) {
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.sqlMessage);
+    console.error('SQL:', error.sql);
+    throw error;
+  }
+}
 
 module.exports = {
   getHomeProducts,
@@ -136,7 +180,10 @@ module.exports = {
   createProduct,
   createProductPhoto,
   verifyProductOwner,
+  verifyProductStock,
   updateProductDetails,
   deleteProduct,
-  getProductPhotoById
+  getProductPhotoById,
+  getProductsByKeyword,
+  updateProductForSuccessfulTransaction
 };

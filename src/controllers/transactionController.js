@@ -1,4 +1,7 @@
 const transactionModel = require('../models/transactionModel.js');
+const productModel = require('../models/productModel.js');
+const userModel = require('../models/userModel.js');
+const sellerModel = require('../models/sellerModel.js');
 const helpers = require('../helpers/helpers.js');
 const { nanoid } = require('nanoid/non-secure');
 const axios = require('axios');
@@ -48,8 +51,14 @@ const getSellerTransactions = async (req, res) => {
 const requestPaymentLink = async (req, res) => {
   const id = nanoid(16);
   const { product_id, price, amount, shippingCost, product_name, category, name, email, seller_id } = req.body;
-  const number = req.user.number;
 
+  // Product Stock Check
+  const productStock = await productModel.verifyProductStock(product_id, seller_id);
+  if (productStock[0].stock < amount) {
+    return res.status(422).json({ message: 'Insufficient stock' });
+  }
+
+  const number = req.user.number;
 
   // Request Data
   const adjustedPrice = price + shippingCost;
@@ -84,8 +93,8 @@ const requestPaymentLink = async (req, res) => {
     "usage_limit":  1,
     "expiry": {
       "start_time": helpers.getFormattedTimestamp,
-      "duration": 24,
-      "unit": "hours"
+      "duration": 10,
+      "unit": "minutes"
     },
     "enabled_payments": [
       "credit_card",
@@ -138,6 +147,10 @@ const updateTransactionStatusForMidtrans = async (req, res) => {
     if (signatureKeyComparer == signature_key) {
       if (transaction_status == 'capture' || transaction_status == 'settlement' && fraud_status == 'accept') {
         await transactionModel.updateTransactionStatus(id, 'diajukan');
+        const transactionDetails = await transactionModel.getTransactionById(id);
+        const sellerId = transactionDetails[0].seller_id;
+        const productAmount = transactionDetails[0].product_amount;
+        await productModel.updateProductForSuccessfulTransaction(id, sellerId, productAmount);
         return res.status(200).json({ message: 'Success' });
       }
     }
@@ -150,10 +163,12 @@ const updateTransactionStatusForMidtrans = async (req, res) => {
 
 const updateTransactionStatusForUser = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, product_amount, seller_id } = req.body;
     const number = req.user.number;
     const status = 'selesai';
     await transactionModel.updateTransactionStatus(id, status, number);
+    await sellerModel.updateSellerSalesCount(seller_id, product_amount);
+    await userModel.updateUserBuysCount(number, product_amount);
     res.status(200).json({ message: 'Success'});
   } catch (error) {
     console.log(error);
@@ -174,6 +189,19 @@ const updateTransactionStatusForSeller = async (req, res) => {
   }
 };
 
+const getTransaction = async (req, res) => {
+  const number = req.user.number;
+  const { id } = req.body;
+
+  try {
+    const responseData = await transactionModel.getTransactionById(id, number);
+    res.status(200).json({ message: 'Success', data: responseData[0] });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Transaction detail retieval fail'});
+  }
+};
+
 module.exports = {
   getUserTransactions,
   getSellerTransactions,
@@ -181,5 +209,6 @@ module.exports = {
   updateTransactionStatusForUser,
   updateTransactionStatusForSeller,
   requestPaymentLink,
-  updateTransactionStatusForMidtrans
+  updateTransactionStatusForMidtrans,
+  getTransaction
 }

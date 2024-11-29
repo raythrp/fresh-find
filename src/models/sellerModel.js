@@ -129,11 +129,25 @@ const updateSellerDetails = async (number, store_name, email, address_number, ad
   }
 };
 
+const updateSellerSalesCount = async (id, amount) => {
+  try {
+    const SQLQuery = 'UPDATE sellers SET sales_count = sales_count + ?, updated_at = ? WHERE number = ?';
+    const updated_at = helpers.getLocalTime();
+    await db.execute(SQLQuery, [amount, updated_at, id]);
+  } catch (error) {
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.sqlMessage);
+    console.error('SQL:', error.sql);
+    throw error;
+  }
+}
+
 module.exports = {
   updateSellerPhoto,
   getCredentials,
   createSeller,
   getSellerById,
   getSellerForProductById,
-  updateSellerDetails
+  updateSellerDetails,
+  updateSellerSalesCount
 };
