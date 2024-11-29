@@ -26,6 +26,19 @@ const getTransactionById = async (id, number) => {
   }
 };
 
+const getTransactionByIdUnauthenticated = async (id) => {
+  try {
+    const SQLQuery = 'SELECT * FROM transactions WHERE id = ?';
+    const result = db.execute(SQLQuery, [id]);
+    return result;
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
+};
+
 const getTransactionByUserId = async (id) => {
   try {
     const SQLQuery = 'SELECT * FROM transactions WHERE user_id = ?';
@@ -98,5 +111,6 @@ module.exports = {
   updateTransactionStatus,
   createTransaction,
   updateTransactionStatusSellerAuthenticated, 
-  updateTransactionStatusUserAuthenticated
+  updateTransactionStatusUserAuthenticated,
+  getTransactionByIdUnauthenticated
 }

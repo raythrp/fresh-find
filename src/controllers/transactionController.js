@@ -10,7 +10,7 @@ const { sha512 } = require('js-sha512');
 const getTransactionById = async () => {
   try {
     const { id } = req.body;
-    const responseData = await getTransactionById(id);
+    const responseData = await getTransactionByIdUn(id);
 
     if (responseData === 0) {
       return res.status(404).json({ message: 'Transaction not found'});
@@ -54,7 +54,7 @@ const requestPaymentLink = async (req, res) => {
 
   // Product Stock Check
   const productStock = await productModel.verifyProductStock(product_id, seller_id);
-  if (productStock[0].stock < amount) {
+  if (productStock[0].stock < amount || productStock[0].stock != 0) {
     return res.status(422).json({ message: 'Insufficient stock' });
   }
 
@@ -147,9 +147,9 @@ const updateTransactionStatusForMidtrans = async (req, res) => {
     if (signatureKeyComparer == signature_key) {
       if (transaction_status == 'capture' || transaction_status == 'settlement' && fraud_status == 'accept') {
         await transactionModel.updateTransactionStatus(id, 'diajukan');
-        const transactionDetails = await transactionModel.getTransactionById(id);
-        const sellerId = transactionDetails[0].seller_id;
-        const productAmount = transactionDetails[0].product_amount;
+        const transactionDetails = await transactionModel.getTransactionByIdUnauthenticated(id);
+        const sellerId = transactionDetails[0][0].seller_id;
+        const productAmount = transactionDetails[0][0].product_amount;
         await productModel.updateProductForSuccessfulTransaction(id, sellerId, productAmount);
         return res.status(200).json({ message: 'Success' });
       }
