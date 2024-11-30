@@ -151,9 +151,6 @@ const updateTransactionStatusForMidtrans = async (req, res) => {
         const sellerId = transactionDetails[0][0].seller_id;
         const productAmount = transactionDetails[0][0].product_amount;
         const productId = transactionDetails[0][0].product_id;
-        console.error(productAmount);
-        console.error(sellerId);
-        console.error(id);
         await productModel.updateProductForSuccessfulTransaction(productId, sellerId, productAmount);
         return res.status(200).json({ message: 'Success' });
       }
