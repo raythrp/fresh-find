@@ -46,6 +46,8 @@ const getFormattedTimestamp = () => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${sign}${offsetHours}${offsetMinutes}`;
 };
 
+
+// To get Jakarta Time
 const getLocalTime = () => {
   const now = new Date();
 
@@ -60,8 +62,41 @@ const getLocalTime = () => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+// OTP mechanism
+const twilio = require('twilio');
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const serviceSID = process.env.TWILIO_SERVICE_SID
+const client = twilio(accountSid, authToken);
+
+async function createVerification(number) {
+  const verification = await client.verify.v2
+    .services(serviceSID)
+    .verifications.create({
+      channel: "sms",
+      to: `+${number}`,
+    });
+
+  return verification.status;
+}
+
+async function createVerificationCheck(number, code) {
+  const verificationCheck = await client.verify.v2
+    .services(serviceSID)
+    .verificationChecks.create({
+      code: `${code}`,
+      to: `+${number}`,
+    });
+
+  return verificationCheck.status;
+}
+
+
 module.exports = {
   uploadImage,
   getFormattedTimestamp,
-  getLocalTime
+  getLocalTime,
+  createVerification,
+  createVerificationCheck
 };

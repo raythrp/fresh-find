@@ -1,6 +1,20 @@
 const db = require('../config/database');
 const helpers = require('../helpers/helpers.js');
 
+// For checking existence
+
+const getSellerNumberByNumber = (number) => {
+  try {
+    const SQLQuery = 'SELECT number FROM sellers WHERE number = ?';
+    return db.query(SQLQuery, [number]);
+  } catch (error) {
+    console.error('Error code:', error.code);  
+    console.error('Error message:', error.sqlMessage); 
+    console.error('SQL:', error.sql);  
+    throw error;
+  }
+};
+
 const getCredentials = async (number) => {
   try {
   const SQLQuery = 'SELECT number, password FROM sellers WHERE number = ?';
@@ -149,5 +163,6 @@ module.exports = {
   getSellerById,
   getSellerForProductById,
   updateSellerDetails,
-  updateSellerSalesCount
+  updateSellerSalesCount,
+  getSellerNumberByNumber
 };

@@ -23,6 +23,9 @@ router.post('/user/login', authController.userLogin);
 router.post('/seller/login', authController.sellerLogin);
 router.post('/user/register', authController.userRegister);
 router.post('/seller/register', authController.sellerRegister);
+router.post('/user/otp', authController.userSendOTP);
+router.post('/seller/otp', authController.sellerSendOTP);
+router.post('/otp/verify', authController.verifyOTP);
 
 // For Products
 router.get('/home', productController.getHomeProducts);

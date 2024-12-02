@@ -1,7 +1,54 @@
 const userModel = require('../models/userModel');
 const sellerModel = require('../models/sellerModel');
+const helpers = require('../helpers/helpers.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+const userSendOTP = async (req, res) => {
+  const { number } = req.body;
+
+  try {
+    const exist = await userModel.getUserNumberByNumber(number);
+    console.error(exist[0][0]);
+    if (exist[0][0] == undefined) {
+      const responseData = await helpers.createVerification(number);
+      return res.status(200).json({ message: 'Success', data: { status: responseData} });
+    } else {
+      return res.status(409).json({ message: 'Phone number registered'});
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'OTP request fail'});
+  }
+};
+
+const sellerSendOTP = async (req, res) => {
+  const { number } = req.body;
+
+  try {
+    const exist = await sellerModel.getSellerNumberByNumber(number);
+    if (exist[0][0] == undefined) {
+      // const responseData = await helpers.createVerification(number);
+      return res.status(200).json({ message: 'Success', data: { status: responseData.status, valid: responseData.valid } });
+    } else {
+      return res.status(409).json({ message: 'Phone number registered'});
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'OTP request fail'});
+  }
+};
+
+const verifyOTP = async (req, res) => {
+  const { number, code } = req.body;
+
+  try {
+    const responseData = await helpers.createVerificationCheck(number, code);
+    return res.status(200).json({ message: 'Success', data: { status: responseData} })
+  } catch (error) {
+    return res.status(500).json({ message: 'OTP check fail', error: error.message });
+  }
+}
 
 // For registering new user
 const userRegister = async (req, res) => {
@@ -138,4 +185,7 @@ module.exports = {
   userLogin,
   sellerRegister,
   sellerLogin,
+  userSendOTP,
+  verifyOTP,
+  sellerSendOTP
 };
