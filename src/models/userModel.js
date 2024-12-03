@@ -95,6 +95,17 @@ const updateUserBuysCount = async (id, amount) => {
   }
 };
 
+const updatePasswordByEmail = async (email, newPassword) => {
+  try {
+    const SQLQuery = 'UPDATE users SET password = ? WHERE email = ?';
+    await db.execute(SQLQuery, [newPassword, email]);
+  } catch (error) {
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.sqlMessage);
+    console.error('SQL:', error.sql);
+    throw error;
+  }
+}
 
 module.exports = {
   getCredentials,
@@ -104,4 +115,5 @@ module.exports = {
   updateUserDetails,
   updateUserBuysCount,
   getUserNumberByNumber,
+  updatePasswordByEmail
 };

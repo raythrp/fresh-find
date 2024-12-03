@@ -92,11 +92,39 @@ async function createVerificationCheck(number, code) {
   return verificationCheck.status;
 }
 
+// Sending email
+const nodemailer = require('nodemailer');
+
+async function sendEmail(userEmail, token) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rayhanaprasnaputra@gmail.com',
+        pass: process.env.GMAIL_APP_PASSWORD
+      }
+    });
+  
+    const info = await transporter.sendMail({
+      from: `"Fresh Find Mailing Representative" <rayhanaprasnaputra@gmail.com>`,
+      to: `${userEmail}`,
+      subject: 'Reset Your Password',
+      text: 'Click to reset your password',
+      html: `<a href='http://app.freshfind.dev:8080/recovery/${token}'`
+    });
+  
+    return (`Message sent: ${info.messageId}`);
+  } catch (error) {
+    throw error;
+  }
+
+}
 
 module.exports = {
   uploadImage,
   getFormattedTimestamp,
   getLocalTime,
   createVerification,
-  createVerificationCheck
+  createVerificationCheck,
+  sendEmail
 };

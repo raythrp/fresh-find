@@ -46,7 +46,57 @@ const verifyOTP = async (req, res) => {
     const responseData = await helpers.createVerificationCheck(number, code);
     return res.status(200).json({ message: 'Success', data: { status: responseData} })
   } catch (error) {
-    return res.status(500).json({ message: 'OTP check fail', error: error.message });
+    console.log(error);
+    return res.status(500).json({ message: 'OTP check fail'});
+  }
+}
+
+const forgetPassword = async (req, res) => {
+  const { email, userType } = req.body;
+
+  try {
+    const user = { email: email, user_type: userType };
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+    const messageId = helpers.sendEmail(email, token)
+    res.status(200).json({ message: 'Success', data: messageId});
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: 'Forget password fail' });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  const token = req.params.token;
+  if (token == null) {
+    return res.sendStatus(401);
+  } 
+
+  try {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch (error) {
+    res.status(401).json({ message: 'Unauthorized'});
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const { email, userType } = decoded;
+    const password = req.body.password;
+    hashedPassword = bcrypt.hashSync(password, 10);
+
+    switch (userType){
+      case 'user':
+        userModel.updatePasswordByEmail(email, hashedPassword);
+        break;
+      case 'seller':
+        sellerModel.updatePasswordByEmail(email, hashedPassword);
+        break;
+      default: throw error;
+    }
+
+    res.status(200).json({ message: 'Success'});
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Password update fail'});
   }
 }
 
@@ -187,5 +237,7 @@ module.exports = {
   sellerLogin,
   userSendOTP,
   verifyOTP,
-  sellerSendOTP
+  sellerSendOTP,
+  forgetPassword,
+  updatePassword
 };

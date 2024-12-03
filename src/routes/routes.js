@@ -26,6 +26,8 @@ router.post('/seller/register', authController.sellerRegister);
 router.post('/user/otp', authController.userSendOTP);
 router.post('/seller/otp', authController.sellerSendOTP);
 router.post('/otp/verify', authController.verifyOTP);
+router.post('/recovery/:token', authController.updatePassword);
+router.put('/recovery/reset', authController.forgetPassword);
 
 // For Products
 router.get('/home', productController.getHomeProducts);

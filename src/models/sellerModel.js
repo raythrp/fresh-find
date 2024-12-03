@@ -154,7 +154,19 @@ const updateSellerSalesCount = async (id, amount) => {
     console.error('SQL:', error.sql);
     throw error;
   }
-}
+};
+
+const updatePasswordByEmail = async (email, newPassword) => {
+  try {
+    const SQLQuery = 'UPDATE sellers SET password = ? WHERE email = ?';
+    await db.execute(SQLQuery, [newPassword, email]);
+  } catch (error) {
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.sqlMessage);
+    console.error('SQL:', error.sql);
+    throw error;
+  }
+};
 
 module.exports = {
   updateSellerPhoto,
@@ -164,5 +176,6 @@ module.exports = {
   getSellerForProductById,
   updateSellerDetails,
   updateSellerSalesCount,
-  getSellerNumberByNumber
+  getSellerNumberByNumber,
+  updatePasswordByEmail
 };
