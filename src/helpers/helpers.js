@@ -108,12 +108,11 @@ async function sendEmail(userEmail, token) {
     const info = await transporter.sendMail({
       from: `"Fresh Find Mailing Representative" <rayhanaprasnaputra@gmail.com>`,
       to: `${userEmail}`,
-      subject: 'Reset Your Password',
-      text: 'Click to reset your password',
-      html: `<a href='http://app.freshfind.dev:8080/recovery/${token}'`
+      subject: 'Fresh Find Account Recovery',
+      html: `<p>Click <a href='http://localhost:8080/api/recovery/page/${token}'>here</a> to reset your password</p>`
     });
   
-    return (`Message sent: ${info.messageId}`);
+    return `Message sent: ${info}`;
   } catch (error) {
     throw error;
   }

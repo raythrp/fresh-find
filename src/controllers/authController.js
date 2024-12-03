@@ -55,13 +55,24 @@ const forgetPassword = async (req, res) => {
   const { email, userType } = req.body;
 
   try {
-    const user = { email: email, user_type: userType };
+    const user = { email: email, userType: userType };
     const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-    const messageId = helpers.sendEmail(email, token)
-    res.status(200).json({ message: 'Success', data: messageId});
+    helpers.sendEmail(email, token)
+    res.status(200).json({ message: 'Success'});
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: 'Forget password fail' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const token = req.params.token;
+    console.log(token);
+    res.render('resetPassword', { token: token });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error'});
   }
 };
 
@@ -82,18 +93,26 @@ const updatePassword = async (req, res) => {
     const { email, userType } = decoded;
     const password = req.body.password;
     hashedPassword = bcrypt.hashSync(password, 10);
+    console.log(password) 
+    console.log(email) 
+    console.log(userType) 
+    let updated = false;
 
     switch (userType){
       case 'user':
         userModel.updatePasswordByEmail(email, hashedPassword);
+        updated = true;
         break;
       case 'seller':
         sellerModel.updatePasswordByEmail(email, hashedPassword);
+        updated = true;
         break;
-      default: throw error;
+      default: res.status(401).json({ message: 'Unauthorized'});
     }
 
-    res.status(200).json({ message: 'Success'});
+    if (updated == true) {
+      return res.render('redirect');
+    } else return res.status(500).json({ message: 'Password update fail'});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Password update fail'});
@@ -239,5 +258,6 @@ module.exports = {
   verifyOTP,
   sellerSendOTP,
   forgetPassword,
-  updatePassword
+  updatePassword,
+  resetPassword
 };
