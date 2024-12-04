@@ -109,7 +109,7 @@ async function sendEmail(userEmail, token) {
       from: `"Fresh Find Mailing Representative" <rayhanaprasnaputra@gmail.com>`,
       to: `${userEmail}`,
       subject: 'Fresh Find Account Recovery',
-      html: `<p>Click <a href='http://app.freshfind.dev:8080/api/recovery/page/${token}'>here</a> to reset your password</p>`
+      html: `<p>Click <a href='https://app.freshfind.dev/api/recovery/page/${token}'>here</a> to reset your password</p>`
     });
   
     return `Message sent: ${info}`;
