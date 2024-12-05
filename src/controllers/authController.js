@@ -68,7 +68,6 @@ const forgetPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const token = req.params.token;
-    console.log(token);
     res.render('resetPassword', { token: token });
   } catch (error) {
     console.error(error);
