@@ -32,10 +32,10 @@ router.post('/recovery/:token', authController.updatePassword);
 
 // For Products
 router.get('/home', productController.getHomeProducts);
-router.get('/products/search', productController.searchProducts);
+router.post('/products/search', productController.searchProducts);
 router.post('/products/recognize', upload.single('image'), productController.predictProductName);
-router.get('/products', productController.getProductById);
-router.post('/products', authenticateToken, productController.createProduct);
+router.post('/products', productController.getProductById);
+router.post('/products/add', authenticateToken, productController.createProduct);
 router.post('/products/photos', authenticateToken, upload.single('productPhoto'), productController.createProductPhoto);
 router.put('/products/update', authenticateToken, productController.updateProductDetails);
 router.delete('/products/:id', productController.deleteProduct);
@@ -51,7 +51,7 @@ router.put('/seller/details', authenticateToken, sellerController.updateSellerDe
 // For transactions
 router.get('/transactions/user', authenticateToken, transactionController.getUserTransactions);
 router.get('/transactions/seller', authenticateToken, transactionController.getSellerTransactions);
-router.get('/transactions/specified', authenticateToken, transactionController.getTransaction);
+router.post('/transactions/specified', authenticateToken, transactionController.getTransaction);
 router.post('/transactions/paymentlink', authenticateToken, transactionController.requestPaymentLink);
 router.put('/transactions/status/user', authenticateToken, transactionController.updateTransactionStatusForUser);
 router.put('/transactions/status/seller', authenticateToken, transactionController.updateTransactionStatusForSeller);
