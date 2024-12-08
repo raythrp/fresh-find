@@ -33,6 +33,7 @@ router.post('/recovery/:token', authController.updatePassword);
 // For Products
 router.get('/home', productController.getHomeProducts);
 router.get('/products/search', productController.searchProducts);
+router.post('/products/recognize', upload.single('image'), productController.predictProductName);
 router.get('/products', productController.getProductById);
 router.post('/products', authenticateToken, productController.createProduct);
 router.post('/products/photos', authenticateToken, upload.single('productPhoto'), productController.createProductPhoto);

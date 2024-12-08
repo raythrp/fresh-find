@@ -2,6 +2,7 @@ const productModel = require('../models/productModel');
 const sellerModel = require('../models/sellerModel.js');
 const { nanoid } = require('nanoid/non-secure');
 const helpers = require('../helpers/helpers.js');
+const axios = require('axios');
 
 const getHomeProducts = async (req, res) => {
   try {
@@ -136,7 +137,31 @@ const searchProducts = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Product retrieval fail' });
   }
-}
+};
+
+const predictProductName = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No photo uploaded'});
+  } else {
+    const photo = req.file;
+    const modelUrl = process.env.MODEL_URL;
+
+    try {
+      const response = await axios.post(modelUrl, {
+        photo: photo
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      res.status(200).json({ message: 'Success', data: response});
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Image recognition fail'});
+    }
+  }
+};
 
 module.exports = {
   getHomeProducts,
@@ -145,5 +170,6 @@ module.exports = {
   createProductPhoto,
   updateProductDetails,
   deleteProduct,
-  searchProducts
+  searchProducts,
+  predictProductName
 };
