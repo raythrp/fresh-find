@@ -2,7 +2,9 @@ const productModel = require('../models/productModel');
 const sellerModel = require('../models/sellerModel.js');
 const { nanoid } = require('nanoid/non-secure');
 const helpers = require('../helpers/helpers.js');
+const FormData = require('form-data');
 const axios = require('axios');
+const fs = require('fs');
 
 const getHomeProducts = async (req, res) => {
   try {
@@ -143,22 +145,54 @@ const predictProductName = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No photo uploaded'});
   } else {
-    const photo = req.file;
-    const modelUrl = process.env.MODEL_URL;
+    const newPhoto = req.file;
+    const modelUrl = process.env.MODEL_URI;
+
+    // Upload to Bucket
+    let imageUrl = '' 
+    try {
+      imageUrl = await helpers.uploadImage(newPhoto, 'product_recognize_photos');
+    } catch (error) {
+      throw error;
+    }
 
     try {
-      const response = await axios.post(modelUrl, {
-        photo: photo
-      }, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      // Retrieve uploaded image
+      const image = await axios({
+        method: 'get',
+        url: imageUrl,
+        responseType: 'stream',
       });
 
-      res.status(200).json({ message: 'Success', data: response});
+      // Request to AI Model
+      const form = new FormData();
+      form.append('file', image.data);
+      let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: modelUrl,
+        headers: { 
+          ...form.getHeaders()
+        },
+        data : form
+      };
+      
+      const response = await axios.request(config);
+      const keyword = JSON.stringify(response.data.predicted_class).replace(/"/g, '');
+
+      // Translate Keyword
+      const googleTranslateUrl = 'https://translation.googleapis.com/language/translate/v2';
+      const translatedKeyword = await axios({
+        method: 'get',
+        url: `${googleTranslateUrl}?q=${keyword}&target=id&format=text&source=en&model=base&key=${process.env.CLOUD_TRANSLATION_API_KEY}`
+      });
+
+      // Process the search
+      const result = await axios.post('https://app.freshfind.dev/api/products/search', { keyword: translatedKeyword.data.data.translations[0].translatedText });
+      res.status(200).json({ message: 'Success', data: result.data});
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: 'Image recognition fail'});
+      res.status(500).json({ message: 'Image recognition fail', uri: imageUrl });
     }
   }
 };

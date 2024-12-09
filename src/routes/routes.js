@@ -11,8 +11,11 @@ const multer = require('multer');
 
 // Middleware for uploading file
 const storage = multer.memoryStorage();
+
+const uploadOriginal = multer({ storage });
+
 const upload = multer({
-  storage: multer.memoryStorage(),
+  storage: storage,
   limits: {
     fileSize: 5 * 1024 * 1024,
   },
