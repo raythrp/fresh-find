@@ -155,6 +155,7 @@ const predictProductName = async (req, res) => {
     } catch (error) {
       throw error;
     }
+    console.log('Upload complete')
 
     try {
       // Retrieve uploaded image
@@ -163,6 +164,7 @@ const predictProductName = async (req, res) => {
         url: imageUrl,
         responseType: 'stream',
       });
+      console.log('Image get complete')
 
       // Request to AI Model
       const form = new FormData();
@@ -179,6 +181,7 @@ const predictProductName = async (req, res) => {
       
       const response = await axios.request(config);
       const keyword = JSON.stringify(response.data.predicted_class).replace(/"/g, '');
+      console.log('Keyword complete')
 
       // Translate Keyword
       const googleTranslateUrl = 'https://translation.googleapis.com/language/translate/v2';
@@ -186,6 +189,7 @@ const predictProductName = async (req, res) => {
         method: 'get',
         url: `${googleTranslateUrl}?q=${keyword}&target=id&format=text&source=en&model=base&key=${process.env.CLOUD_TRANSLATION_API_KEY}`
       });
+      console.log('Translation complete')
 
       // Process the search
       const result = await axios.post('https://app.freshfind.dev/api/products/search', { keyword: translatedKeyword.data.data.translations[0].translatedText });
