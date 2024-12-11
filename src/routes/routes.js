@@ -30,7 +30,7 @@ router.post('/user/otp', authController.userSendOTP);
 router.post('/seller/otp', authController.sellerSendOTP);
 router.post('/otp/verify', authController.verifyOTP);
 router.post('/recovery/reset', authController.forgetPassword);
-router.get('/recovery/page/:token', authController.resetPassword)
+router.get('/recovery/page/:token', authController.resetPassword);
 router.post('/recovery/:token', authController.updatePassword);
 
 // For Products

@@ -189,7 +189,7 @@ const predictProductName = async (req, res) => {
 
       // Process the search
       const result = await axios.post('https://app.freshfind.dev/api/products/search', { keyword: translatedKeyword.data.data.translations[0].translatedText });
-      res.status(200).json({ message: 'Success', data: result.data});
+      res.status(200).json({ message: 'Success', data: result.data.data});
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: 'Image recognition fail', uri: imageUrl });
